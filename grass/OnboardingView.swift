@@ -1,10 +1,6 @@
 //
 //  ContentView.swift
 //  grass
-//
-//  Created by saumil on 22/10/22.
-//
-//
 //we were forced to write this code
 //
 //pls no copy
@@ -20,7 +16,7 @@ struct OnboardingView: View {
             LaunchView()
             AddCustomPlantView(plants: $plantManager.plants)
         }.tabViewStyle(.page)
-        .indexViewStyle(.page(backgroundDisplayMode: .always))
+            .indexViewStyle(.page(backgroundDisplayMode: .always))
     }
 }
 
