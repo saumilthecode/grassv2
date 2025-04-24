@@ -19,35 +19,22 @@ struct PlantDetailView: View {
     var body: some View {
         VStack {
             List{
-                if let scienceName = plants.scientificName {
-                    Section(header: Text("Details")) {
-                        HStack{
-                            Image(systemName: "tag.fill")
-                            Text("Plant Name")
-                            Spacer()
-                            Text(plants.name)
-                                .foregroundColor(Color(.gray))
-                                .multilineTextAlignment(.trailing)
-                        }
-                        HStack{
-                            Image(systemName: "testtube.2")
-                                .foregroundColor(.purple)
-                            Text("Scientific Name")
-                            Spacer()
-                            Text(scienceName)
-                                .foregroundColor(Color(.gray))
-                        }
+                Section(header: Text("Details")) {
+                    HStack{
+                        Image(systemName: "tag.fill")
+                        Text("Plant Name")
+                        Spacer()
+                        Text(plants.name)
+                            .foregroundColor(Color(.gray))
+                            .multilineTextAlignment(.trailing)
                     }
-                } else {
-                    Section(header: Text("Details")) {
-                        HStack{
-                            Image(systemName: "tag.fill")
-                            Text("Plant Name")
-                            Spacer()
-                            Text(plants.name)
-                                .foregroundColor(Color(.gray))
-                                .multilineTextAlignment(.trailing)
-                        }
+                    HStack{
+                        Image(systemName: "testtube.2")
+                            .foregroundColor(.purple)
+                        Text("Scientific Name")
+                        Spacer()
+                        Text(plants.scientificName)
+                            .foregroundColor(Color(.gray))
                     }
                 }
                 Section(header: Text("Care Instructions")) {

@@ -21,12 +21,10 @@ struct PlantConfirmationView: View {
                 HStack(alignment: .top){
                     VStack(alignment: .leading){
                         Spacer()
-                        if let scienceName = plants.scientificName {
-                            Text(scienceName)
-                                .italic()
-                                .foregroundColor(Color(.white))
-                                .font(.title2)
-                        }
+                        Text(plants.scientificName)
+                            .italic()
+                            .foregroundColor(Color(.white))
+                            .font(.title2)
                         Text(plants.name)
                             .bold()
                             .foregroundColor(Color(.white))
