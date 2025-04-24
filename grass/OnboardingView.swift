@@ -14,19 +14,20 @@
 import SwiftUI
 
 struct OnboardingView: View {
-    @ObservedObject var plantManager = PlantManager()
+    @ObservedObject var plantManager: PlantManager
+    
     var body: some View {
-        TabView{
+        TabView {
             LaunchView()
-            AddCustomPlantView(plants: $plantManager.plants)
-        }.tabViewStyle(.page)
+            AddCustomPlantView(plants: $plantManager.plants, isOnboarding: true)
+        }
+        .tabViewStyle(.page)
         .indexViewStyle(.page(backgroundDisplayMode: .always))
     }
 }
 
-
 struct OnboardingView_Previews: PreviewProvider {
     static var previews: some View {
-        OnboardingView()
+        OnboardingView(plantManager: PlantManager())
     }
 }

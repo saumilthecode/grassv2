@@ -32,9 +32,7 @@ class NotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
 }
 
 struct ContentView: View {
-
-    
-    @StateObject var plantManager = PlantManager()
+    @ObservedObject var plantManager: PlantManager
     
     @State var isNewPlantPresented = false
     @State var isOnboardingPresented = false
@@ -77,9 +75,11 @@ struct ContentView: View {
                 }
             }
         }.sheet(isPresented: $isNewPlantPresented) {
-            AddCustomPlantView(plants: $plantManager.plants)
+            NavigationView {
+                AddCustomPlantView(plants: $plantManager.plants, isOnboarding: false)
+            }
         }.sheet(isPresented: $isOnboardingPresented) {
-            OnboardingView()
+            OnboardingView(plantManager: plantManager)
         }
         .onChange(of: plantManager.plants) { newValue in
             isOnboardingPresented = newValue.isEmpty

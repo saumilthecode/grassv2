@@ -32,7 +32,7 @@ struct grassApp: App {
     
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView(plantManager: plantManager)
         }
     }
 }

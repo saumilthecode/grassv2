@@ -44,7 +44,7 @@ struct EditPlantView: View {
                         EmptyView()
                     }
                 }
-                TextField("Watering Instructions", text: $plant.wateringGuide)
+                TextField("Watering Instructions (Optional)", text: $plant.wateringGuide)
             }
             Section(header: Text("Fertilisation")) {
                 HStack {
@@ -57,7 +57,7 @@ struct EditPlantView: View {
                         EmptyView()
                     }
                 }
-                TextField("Fertilisation Instructions", text: $plant.fertilisationGuide)
+                TextField("Fertilisation Instructions(Optional)", text: $plant.fertilisationGuide)
             }
         }
         .navigationTitle("Edit Plant")
