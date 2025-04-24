@@ -15,6 +15,7 @@ import SwiftUI
 struct PlantDetailView: View {
     
     @Binding var plants: Plant
+    @State private var isEditing = false
     
     var body: some View {
         VStack {
@@ -28,13 +29,15 @@ struct PlantDetailView: View {
                             .foregroundColor(Color(.gray))
                             .multilineTextAlignment(.trailing)
                     }
-                    HStack{
-                        Image(systemName: "testtube.2")
-                            .foregroundColor(.purple)
-                        Text("Scientific Name")
-                        Spacer()
-                        Text(plants.scientificName)
-                            .foregroundColor(Color(.gray))
+                    if !plants.scientificName.isEmpty {
+                        HStack{
+                            Image(systemName: "testtube.2")
+                                .foregroundColor(.purple)
+                            Text("Scientific Name")
+                            Spacer()
+                            Text(plants.scientificName)
+                                .foregroundColor(Color(.gray))
+                        }
                     }
                 }
                 Section(header: Text("Care Instructions")) {
@@ -60,8 +63,10 @@ struct PlantDetailView: View {
                         Text("Water every \(plants.wateringFrequency) days")
                                 .bold()
                     }
-                    HStack {
-                        Text(plants.wateringGuide)
+                    if !plants.wateringGuide.isEmpty {
+                        HStack {
+                            Text(plants.wateringGuide)
+                        }
                     }
                     HStack {
                         Image(systemName: "leaf.fill")
@@ -69,13 +74,25 @@ struct PlantDetailView: View {
                         Text("Fertilise every \(plants.fertilisationFrequency) days")
                             .bold()
                     }
-                    HStack {
-                        Text(plants.fertilisationGuide)
+                    if !plants.fertilisationGuide.isEmpty {
+                        HStack {
+                            Text(plants.fertilisationGuide)
+                        }
                     }
                 }
             }
         }
         .navigationTitle(plants.name)
+        .navigationBarItems(trailing: Button(action: {
+            isEditing = true
+        }) {
+            Image(systemName: "pencil")
+        })
+        .sheet(isPresented: $isEditing) {
+            NavigationView {
+                EditPlantView(plant: $plants)
+            }
+        }
     }
 }
     
