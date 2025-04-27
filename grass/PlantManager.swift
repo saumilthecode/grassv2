@@ -7,10 +7,20 @@
 
 import Foundation
 import SwiftUI
+import UserNotifications
 
 class PlantManager: ObservableObject {
     @Published var plants: [Plant] = [] {
         didSet {
+            // Remove notifications for deleted plants
+            let oldPlantIDs = Set(oldValue.map { $0.id })
+            let newPlantIDs = Set(plants.map { $0.id })
+            let deletedPlantIDs = oldPlantIDs.subtracting(newPlantIDs)
+            
+            for plantID in deletedPlantIDs {
+                cleanupNotifications(for: plantID)
+            }
+            
             save()
         }
     }
@@ -51,5 +61,13 @@ class PlantManager: ObservableObject {
         }
 
         plants = finalPlants
+    }
+
+    private func cleanupNotifications(for plantID: UUID) {
+        let center = UNUserNotificationCenter.current()
+        center.removePendingNotificationRequests(withIdentifiers: [
+            "watering-\(plantID)",
+            "fertilisation-\(plantID)"
+        ])
     }
 }

@@ -28,6 +28,26 @@ struct grassApp: App {
                 print(error)
             }
         }
+        
+        // Clean up any orphaned notifications
+        cleanupOrphanedNotifications()
+    }
+    
+    private func cleanupOrphanedNotifications() {
+        let center = UNUserNotificationCenter.current()
+        center.getPendingNotificationRequests { requests in
+            let validIdentifiers = plantManager.plants.flatMap { plant in
+                ["watering-\(plant.id)", "fertilisation-\(plant.id)"]
+            }
+            
+            let orphanedIdentifiers = requests
+                .map { $0.identifier }
+                .filter { !validIdentifiers.contains($0) }
+            
+            if !orphanedIdentifiers.isEmpty {
+                center.removePendingNotificationRequests(withIdentifiers: orphanedIdentifiers)
+            }
+        }
     }
     
     var body: some Scene {

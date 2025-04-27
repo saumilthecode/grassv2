@@ -138,26 +138,6 @@ struct AddCustomPlantView: View {
     }
     
     private func savePlant() {
-        let wateringContent = UNMutableNotificationContent()
-        wateringContent.title = "Water your plant"
-        wateringContent.subtitle = "It's thirsty"
-        wateringContent.sound = UNNotificationSound.default
-        
-        let wateringTrigger = UNTimeIntervalNotificationTrigger(timeInterval: Double(waterFreq * 86400), repeats: true)
-        let wateringRequest = UNNotificationRequest(identifier: UUID().uuidString, content: wateringContent, trigger: wateringTrigger)
-        
-        UNUserNotificationCenter.current().add(wateringRequest)
-        
-        let fertilisationContent = UNMutableNotificationContent()
-        fertilisationContent.title = "Fertilise your plant"
-        fertilisationContent.subtitle = "It's hungry"
-        fertilisationContent.sound = UNNotificationSound.default
-        
-        let fertilisationTrigger = UNTimeIntervalNotificationTrigger(timeInterval: Double(fertFreq * 86400), repeats: true)
-        let fertilisationRequest = UNNotificationRequest(identifier: UUID().uuidString, content: fertilisationContent, trigger: fertilisationTrigger)
-        
-        UNUserNotificationCenter.current().add(fertilisationRequest)
-        
         let plant = Plant(
             name: plantName.trimmingCharacters(in: .whitespacesAndNewlines),
             scientificName: scienceName.trimmingCharacters(in: .whitespacesAndNewlines),
@@ -168,6 +148,27 @@ struct AddCustomPlantView: View {
             temperatureRangeBegin: minTemp,
             temperatureRangeEnd: maxTemp
         )
+        
+        let wateringContent = UNMutableNotificationContent()
+        wateringContent.title = "Water your plant"
+        wateringContent.subtitle = "It's thirsty"
+        wateringContent.sound = UNNotificationSound.default
+        
+        let wateringTrigger = UNTimeIntervalNotificationTrigger(timeInterval: Double(waterFreq * 86400), repeats: true)
+        let wateringRequest = UNNotificationRequest(identifier: "watering-\(plant.id)", content: wateringContent, trigger: wateringTrigger)
+        
+        UNUserNotificationCenter.current().add(wateringRequest)
+        
+        let fertilisationContent = UNMutableNotificationContent()
+        fertilisationContent.title = "Fertilise your plant"
+        fertilisationContent.subtitle = "It's hungry"
+        fertilisationContent.sound = UNNotificationSound.default
+        
+        let fertilisationTrigger = UNTimeIntervalNotificationTrigger(timeInterval: Double(fertFreq * 86400), repeats: true)
+        let fertilisationRequest = UNNotificationRequest(identifier: "fertilisation-\(plant.id)", content: fertilisationContent, trigger: fertilisationTrigger)
+        
+        UNUserNotificationCenter.current().add(fertilisationRequest)
+        
         plants.append(plant)
         dismiss()
     }
