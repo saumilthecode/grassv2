@@ -52,17 +52,7 @@ struct grassApp: App {
     
     var body: some Scene {
         WindowGroup {
-            TabView {
-                ContentView(plantManager: plantManager)
-                    .tabItem {
-                        Label("My Plants", systemImage: "leaf.fill")
-                    }
-                
-                PlantGrowthJournalView(plantManager: plantManager)
-                    .tabItem {
-                        Label("Growth Journal", systemImage: "chart.line.uptrend.xyaxis")
-                    }
-            }
+            ContentView(plantManager: plantManager)
         }
     }
 }
