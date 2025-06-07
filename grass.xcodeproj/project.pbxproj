@@ -7,12 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		5F519EAB2930537100D3646E /* LaunchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F519EAA2930537100D3646E /* LaunchView.swift */; };
 		5F7636142921E803007EE253 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7636132921E802007EE253 /* ContentView.swift */; };
 		5F7636162921E8D2007EE253 /* PlantDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7636152921E8D2007EE253 /* PlantDetailView.swift */; };
 		5FE49734291F36AF0068EE12 /* PlantManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FE49733291F36AF0068EE12 /* PlantManager.swift */; };
 		C69E05C3290CBC97008A449E /* AddCustomPlantView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C69E05C2290CBC97008A449E /* AddCustomPlantView.swift */; };
 		D2749D902DBA09FB00A04CB3 /* EditPlantView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2749D8F2DBA09FB00A04CB3 /* EditPlantView.swift */; };
+		D2EE09EC2DF410B0007875B9 /* LaunchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2EE09E62DF410B0007875B9 /* LaunchView.swift */; };
+		D2EE09F62DF41568007875B9 /* GrowthJournal.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2EE09F32DF41568007875B9 /* GrowthJournal.swift */; };
+		D2EE09F72DF41568007875B9 /* Plant.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2EE09F52DF41568007875B9 /* Plant.swift */; };
+		D2EE09F82DF41568007875B9 /* GrowthTrackerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2EE09F42DF41568007875B9 /* GrowthTrackerView.swift */; };
 		D91B865B2915FAB600631102 /* PlantClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = D91B865A2915FAB600631102 /* PlantClass.swift */; };
 		D91B865D291601E300631102 /* PlantConfirmationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D91B865C291601E300631102 /* PlantConfirmationView.swift */; };
 		D9216777290391A20002F405 /* grassApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9216776290391A20002F405 /* grassApp.swift */; };
@@ -35,12 +38,15 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		5F519EAA2930537100D3646E /* LaunchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LaunchView.swift; path = ../LaunchView.swift; sourceTree = "<group>"; };
 		5F7636132921E802007EE253 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		5F7636152921E8D2007EE253 /* PlantDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlantDetailView.swift; sourceTree = "<group>"; };
 		5FE49733291F36AF0068EE12 /* PlantManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlantManager.swift; sourceTree = "<group>"; };
 		C69E05C2290CBC97008A449E /* AddCustomPlantView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCustomPlantView.swift; sourceTree = "<group>"; };
 		D2749D8F2DBA09FB00A04CB3 /* EditPlantView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditPlantView.swift; sourceTree = "<group>"; };
+		D2EE09E62DF410B0007875B9 /* LaunchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchView.swift; sourceTree = "<group>"; };
+		D2EE09F32DF41568007875B9 /* GrowthJournal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrowthJournal.swift; sourceTree = "<group>"; };
+		D2EE09F42DF41568007875B9 /* GrowthTrackerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrowthTrackerView.swift; sourceTree = "<group>"; };
+		D2EE09F52DF41568007875B9 /* Plant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Plant.swift; sourceTree = "<group>"; };
 		D91B865A2915FAB600631102 /* PlantClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlantClass.swift; sourceTree = "<group>"; };
 		D91B865C291601E300631102 /* PlantConfirmationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlantConfirmationView.swift; sourceTree = "<group>"; };
 		D9216773290391A20002F405 /* grass.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = grass.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -82,12 +88,15 @@
 		D9216775290391A20002F405 /* grass */ = {
 			isa = PBXGroup;
 			children = (
+				D2EE09E62DF410B0007875B9 /* LaunchView.swift */,
 				D9F231BF291F505F00EB91E1 /* Info.plist */,
 				D9216778290391A20002F405 /* OnboardingView.swift */,
-				5F519EAA2930537100D3646E /* LaunchView.swift */,
 				D2749D8F2DBA09FB00A04CB3 /* EditPlantView.swift */,
 				C69E05C2290CBC97008A449E /* AddCustomPlantView.swift */,
 				5F7636132921E802007EE253 /* ContentView.swift */,
+				D2EE09F32DF41568007875B9 /* GrowthJournal.swift */,
+				D2EE09F42DF41568007875B9 /* GrowthTrackerView.swift */,
+				D2EE09F52DF41568007875B9 /* Plant.swift */,
 				D9216776290391A20002F405 /* grassApp.swift */,
 				5F7636152921E8D2007EE253 /* PlantDetailView.swift */,
 				5FE49733291F36AF0068EE12 /* PlantManager.swift */,
@@ -179,8 +188,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D2EE09F62DF41568007875B9 /* GrowthJournal.swift in Sources */,
+				D2EE09F72DF41568007875B9 /* Plant.swift in Sources */,
+				D2EE09F82DF41568007875B9 /* GrowthTrackerView.swift in Sources */,
 				D9216779290391A20002F405 /* OnboardingView.swift in Sources */,
-				5F519EAB2930537100D3646E /* LaunchView.swift in Sources */,
+				D2EE09EC2DF410B0007875B9 /* LaunchView.swift in Sources */,
 				C69E05C3290CBC97008A449E /* AddCustomPlantView.swift in Sources */,
 				D9216777290391A20002F405 /* grassApp.swift in Sources */,
 				5F7636162921E8D2007EE253 /* PlantDetailView.swift in Sources */,
@@ -347,10 +359,10 @@
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 11.5;
+				MACOSX_DEPLOYMENT_TARGET = 13.5;
 				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = sg.tk.2022.grass;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -395,10 +407,10 @@
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 11.5;
+				MACOSX_DEPLOYMENT_TARGET = 13.5;
 				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = sg.tk.2022.grass;
 				PRODUCT_NAME = "$(TARGET_NAME)";

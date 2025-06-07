@@ -32,7 +32,7 @@ class NotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
 }
 
 struct ContentView: View {
-    @ObservedObject var plantManager: PlantManager
+    @StateObject var plantManager = PlantManager()
     
     @State var isNewPlantPresented = false
     @State var isOnboardingPresented = false
@@ -40,45 +40,69 @@ struct ContentView: View {
     @AppStorage("IsFirstLaunch") var isFirstLaunch = true
     
     var body: some View {
-        
-        
-        
-        NavigationView {
-            List {
-                ForEach($plantManager.plants) { $plant in
-                    NavigationLink(destination: PlantDetailView(plants: $plant)) {
-                        VStack(alignment: .leading){
-                            Text(plant.name)
-                            HStack{
-                                Spacer()
+        TabView {
+            // Plants Tab
+            NavigationView {
+                List {
+                    ForEach($plantManager.plants) { $plant in
+                        NavigationLink(destination: PlantDetailView(plants: $plant)) {
+                            VStack(alignment: .leading){
+                                Text(plant.name)
+                                HStack{
+                                    Spacer()
+                                }
+                            }
+                        }
+                    }.onDelete { offset in
+                        plantManager.plants.remove(atOffsets: offset)
+                    }.onMove { source, destination in
+                        plantManager.plants.move(fromOffsets: source, toOffset: destination)
+                    }
+                }
+                .navigationTitle("My Plants")
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        EditButton()
+                    }
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button {
+                            isNewPlantPresented = true
+                        } label: {
+                            Image(systemName: "plus")
+                        }
+                    }
+                }
+            }
+            .tabItem {
+                Label("Plants", systemImage: "leaf.fill")
+            }
+            
+            // Growth Tracker Tab
+            NavigationView {
+                List {
+                    ForEach($plantManager.plants) { $plant in
+                        NavigationLink(destination: GrowthTrackerView(plant: $plant)) {
+                            VStack(alignment: .leading) {
+                                Text(plant.name)
+                                Text("\(plant.growthJournal.entries.count) growth entries")
+                                    .font(.caption)
+                                    .foregroundColor(.gray)
                             }
                         }
                     }
-                }.onDelete { offset in
-                    plantManager.plants.remove(atOffsets: offset)
-                }.onMove { source, destination in
-                    plantManager.plants.move(fromOffsets: source, toOffset: destination)
                 }
-                
+                .navigationTitle("Growth Tracker")
             }
-            .navigationTitle("My Plants")
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    EditButton()
-                }
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button {
-                        isNewPlantPresented = true
-                    } label:   {
-                        Image(systemName: "plus")
-                    }
-                }
+            .tabItem {
+                Label("Growth", systemImage: "chart.line.uptrend.xyaxis")
             }
-        }.sheet(isPresented: $isNewPlantPresented) {
+        }
+        .sheet(isPresented: $isNewPlantPresented) {
             NavigationView {
                 AddCustomPlantView(plants: $plantManager.plants, isOnboarding: false)
             }
-        }.sheet(isPresented: $isOnboardingPresented) {
+        }
+        .sheet(isPresented: $isOnboardingPresented) {
             OnboardingView(plantManager: plantManager)
         }
         .onChange(of: plantManager.plants) { newValue in
