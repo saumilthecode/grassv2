@@ -1,3 +1,11 @@
+//
+//  Plant.swift
+//  grass
+//
+//  Created by Saumil Anand on 9/6/25.
+//
+
+
 import Foundation
 
 struct Plant: Identifiable, Codable, Equatable {
