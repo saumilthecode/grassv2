@@ -22,89 +22,88 @@ struct GrowthTrackerView: View {
     @State private var showingImageSourcePicker = false
     @State private var editingEntry: GrowthEntry?
     @State private var showingDuplicateDayAlert = false
+    @State private var selectedIndex: Int = 0
+    @State private var scrollOffset: CGFloat = 0
+    
+    private let cardWidth: CGFloat = 300
+    private let cardHeight: CGFloat = 400
+    private let cardSpacing: CGFloat = 20
     
     var body: some View {
         GeometryReader { geometry in
-            VStack(spacing: 0) {
-                // Add new entry button at the top
-                Button(action: {
-                    showingImageSourcePicker = true
-                }) {
-                    Label("Add Growth Photo", systemImage: "plus.circle.fill")
-                        .font(.headline)
-                        .padding()
-                        .frame(maxWidth: .infinity)
-                        .background(Color("Swamp Green"))
-                        .foregroundColor(.white)
-                }
-                .padding(.horizontal)
-                .padding(.top)
+            ZStack {
+                // Background
+                Color(.systemBackground)
+                    .ignoresSafeArea()
                 
-                // Stem visualization in a scrollable area
-                ScrollView {
-                    VStack {
-                        // Stem and photos
-                        ZStack(alignment: .bottom) {
-                            // Stem line
-                            Rectangle()
-                                .fill(Color.green)
-                                .frame(width: 8)
-                                .padding(.bottom, 100) // Increased space for pot
-                            
-                            // Photos
-                            VStack(spacing: 40) {
-                                ForEach(plant.growthJournal.entries.sorted(by: { $0.dayNumber > $1.dayNumber })) { entry in
-                                    Image(uiImage: UIImage(data: entry.imageData) ?? UIImage())
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(width: 120, height: 120)
-                                        .clipShape(RoundedRectangle(cornerRadius: 15))
-                                        .shadow(radius: 5)
-                                        .overlay(
-                                            Text("Day \(entry.dayNumber)")
-                                                .font(.caption)
-                                                .padding(6)
-                                                .background(Color.white.opacity(0.9))
-                                                .cornerRadius(8),
-                                            alignment: .top
-                                        )
-                                        .contextMenu {
-                                            Button(action: {
-                                                editingEntry = entry
-                                                newEntryDayNumber = entry.dayNumber
-                                                newEntryNotes = entry.notes
-                                                showingEditEntrySheet = true
-                                            }) {
-                                                Label("Edit Day Number", systemImage: "pencil")
-                                            }
-                                            
-                                            Button(role: .destructive, action: {
-                                                if let index = plant.growthJournal.entries.firstIndex(where: { $0.id == entry.id }) {
-                                                    plant.growthJournal.removeEntry(at: index)
-                                                }
-                                            }) {
-                                                Label("Delete", systemImage: "trash")
-                                            }
-                                        }
+                VStack(spacing: 20) {
+                    // Add new entry button
+                    Button(action: {
+                        showingImageSourcePicker = true
+                    }) {
+                        Label("Add Photo", systemImage: "plus.circle.fill")
+                            .font(.headline)
+                            .padding()
+                            .frame(maxWidth: .infinity)
+                            .background(Color("Swamp Green"))
+                            .foregroundColor(.white)
+                            .cornerRadius(15)
+                    }
+                    .padding(.horizontal)
+                    .padding(.top)
+                    
+                    // Time Machine-like card stack
+                    ZStack {
+                        ForEach(Array(plant.growthJournal.entries.sorted(by: { $0.dayNumber > $1.dayNumber }).enumerated()), id: \.element.id) { index, entry in
+                            GrowthCard(entry: entry, plant: $plant)
+                                .frame(width: cardWidth, height: cardHeight)
+                                .offset(x: calculateOffset(for: index))
+                                .scaleEffect(calculateScale(for: index))
+                                .opacity(calculateOpacity(for: index))
+                                .zIndex(Double(plant.growthJournal.entries.count - index))
+                                .onTapGesture {
+                                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                        selectedIndex = index
+                                    }
+                                }
+                        }
+                    }
+                    .frame(height: cardHeight + 100)
+                    .gesture(
+                        DragGesture()
+                            .onChanged { value in
+                                scrollOffset = value.translation.width
+                            }
+                            .onEnded { value in
+                                let threshold: CGFloat = 50
+                                if value.translation.width > threshold && selectedIndex > 0 {
+                                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                        selectedIndex -= 1
+                                    }
+                                } else if value.translation.width < -threshold && selectedIndex < plant.growthJournal.entries.count - 1 {
+                                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                        selectedIndex += 1
+                                    }
+                                }
+                                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                    scrollOffset = 0
                                 }
                             }
-                            .padding(.bottom, 80) // Increased space for pot
-                            
-                            // Pot
-                            Image(systemName: "square.fill")
-                                .resizable()
-                                .frame(width: 140, height: 100)
-                                .foregroundColor(.brown)
-                                .shadow(radius: 3)
+                    )
+                    
+                    // Scroll wheel indicator
+                    HStack(spacing: 8) {
+                        ForEach(0..<plant.growthJournal.entries.count, id: \.self) { index in
+                            Circle()
+                                .fill(index == selectedIndex ? Color("Swamp Green") : Color.gray.opacity(0.3))
+                                .frame(width: 8, height: 8)
                         }
-                        .frame(minHeight: geometry.size.height - 100)
-                        .frame(maxWidth: .infinity)
                     }
-                    .padding(.horizontal, 40)
+                    .padding(.bottom)
                 }
             }
         }
-        .navigationTitle("Growth Journal for \(plant.name)")
+        .navigationTitle("Growth Journal")
         .navigationBarTitleDisplayMode(.inline)
         .sheet(isPresented: $showingAddEntrySheet) {
             NavigationView {
@@ -125,6 +124,11 @@ struct GrowthTrackerView: View {
                     Section(header: Text("Details")) {
                         TextField("Day Number", value: $newEntryDayNumber, formatter: NumberFormatter())
                             .keyboardType(.numberPad)
+                            .onChange(of: newEntryDayNumber) { newValue in
+                                if newValue < 1 {
+                                    newEntryDayNumber = 1
+                                }
+                            }
                         TextField("Notes (Optional)", text: $newEntryNotes)
                     }
                 }
@@ -136,7 +140,6 @@ struct GrowthTrackerView: View {
                     },
                     trailing: Button("Save") {
                         if let imageData = selectedImageData {
-                            // Check if there's already an entry for this day
                             if plant.growthJournal.entries.contains(where: { $0.dayNumber == newEntryDayNumber }) {
                                 showingDuplicateDayAlert = true
                             } else {
@@ -162,6 +165,11 @@ struct GrowthTrackerView: View {
                     Section(header: Text("Details")) {
                         TextField("Day Number", value: $newEntryDayNumber, formatter: NumberFormatter())
                             .keyboardType(.numberPad)
+                            .onChange(of: newEntryDayNumber) { newValue in
+                                if newValue < 1 {
+                                    newEntryDayNumber = 1
+                                }
+                            }
                         TextField("Notes (Optional)", text: $newEntryNotes)
                     }
                 }
@@ -173,7 +181,6 @@ struct GrowthTrackerView: View {
                     trailing: Button("Save") {
                         if let entry = editingEntry,
                            let index = plant.growthJournal.entries.firstIndex(where: { $0.id == entry.id }) {
-                            // Check if there's already an entry for this day (excluding the current entry)
                             if plant.growthJournal.entries.contains(where: { $0.dayNumber == newEntryDayNumber && $0.id != entry.id }) {
                                 showingDuplicateDayAlert = true
                             } else {
@@ -224,6 +231,129 @@ struct GrowthTrackerView: View {
             if newData != nil && !showingCamera {
                 showingAddEntrySheet = true
             }
+        }
+    }
+    
+    private func calculateOffset(for index: Int) -> CGFloat {
+        let baseOffset = CGFloat(index - selectedIndex) * (cardWidth + cardSpacing)
+        return baseOffset + scrollOffset
+    }
+    
+    private func calculateScale(for index: Int) -> CGFloat {
+        let distance = abs(index - selectedIndex)
+        return max(1.0 - CGFloat(distance) * 0.1, 0.8)
+    }
+    
+    private func calculateOpacity(for index: Int) -> Double {
+        let distance = abs(index - selectedIndex)
+        return max(1.0 - Double(distance) * 0.3, 0.0)
+    }
+}
+
+struct GrowthCard: View {
+    let entry: GrowthEntry
+    @Binding var plant: Plant
+    @State private var showingEditSheet = false
+    @State private var editingDayNumber: Int
+    @State private var editingNotes: String
+    @State private var showingDuplicateDayAlert = false
+    
+    init(entry: GrowthEntry, plant: Binding<Plant>) {
+        self.entry = entry
+        self._plant = plant
+        self._editingDayNumber = State(initialValue: entry.dayNumber)
+        self._editingNotes = State(initialValue: entry.notes)
+    }
+    
+    var body: some View {
+        VStack {
+            if let uiImage = UIImage(data: entry.imageData) {
+                Image(uiImage: uiImage)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 280, height: 280)
+                    .clipShape(RoundedRectangle(cornerRadius: 15))
+            }
+            
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Day \(entry.dayNumber)")
+                    .font(.headline)
+                
+                if !entry.notes.isEmpty {
+                    Text(entry.notes)
+                        .font(.subheadline)
+                        .foregroundColor(.gray)
+                }
+                
+                Text(entry.date.formatted(date: .abbreviated, time: .shortened))
+                    .font(.caption)
+                    .foregroundColor(.gray)
+            }
+            .padding()
+        }
+        .frame(width: 300, height: 400)
+        .background(Color(.systemBackground))
+        .cornerRadius(20)
+        .shadow(radius: 10)
+        .contextMenu {
+            Button(action: {
+                showingEditSheet = true
+            }) {
+                Label("Edit", systemImage: "pencil")
+            }
+            
+            Button(role: .destructive, action: {
+                if let index = plant.growthJournal.entries.firstIndex(where: { $0.id == entry.id }) {
+                    plant.growthJournal.removeEntry(at: index)
+                }
+            }) {
+                Label("Delete", systemImage: "trash")
+            }
+        }
+        .sheet(isPresented: $showingEditSheet) {
+            NavigationView {
+                Form {
+                    Section(header: Text("Details")) {
+                        TextField("Day Number", value: $editingDayNumber, formatter: NumberFormatter())
+                            .keyboardType(.numberPad)
+                            .onChange(of: editingDayNumber) { newValue in
+                                if newValue < 1 {
+                                    editingDayNumber = 1
+                                }
+                            }
+                        TextField("Notes (Optional)", text: $editingNotes)
+                    }
+                }
+                .navigationTitle("Edit Growth Entry")
+                .navigationBarItems(
+                    leading: Button("Cancel") {
+                        showingEditSheet = false
+                    },
+                    trailing: Button("Save") {
+                        if let index = plant.growthJournal.entries.firstIndex(where: { $0.id == entry.id }) {
+                            if plant.growthJournal.entries.contains(where: { $0.dayNumber == editingDayNumber && $0.id != entry.id }) {
+                                showingDuplicateDayAlert = true
+                            } else {
+                                let updatedEntry = GrowthEntry(
+                                    id: entry.id,
+                                    date: entry.date,
+                                    imageData: entry.imageData,
+                                    dayNumber: editingDayNumber,
+                                    notes: editingNotes
+                                )
+                                plant.growthJournal.entries[index] = updatedEntry
+                                plant.growthJournal.entries.sort { $0.dayNumber < $1.dayNumber }
+                                showingEditSheet = false
+                            }
+                        }
+                    }
+                )
+            }
+        }
+        .alert("Duplicate Day", isPresented: $showingDuplicateDayAlert) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text("You can only have one photo per day. Please choose a different day number.")
         }
     }
 }

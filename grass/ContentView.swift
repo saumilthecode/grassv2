@@ -32,7 +32,7 @@ class NotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
 }
 
 struct ContentView: View {
-    @StateObject var plantManager = PlantManager()
+    @EnvironmentObject var plantManager: PlantManager
     
     @State var isNewPlantPresented = false
     @State var isOnboardingPresented = false

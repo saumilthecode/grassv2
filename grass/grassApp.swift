@@ -18,7 +18,7 @@ import UserNotifications
 
 struct grassApp: App {
     private var delegate: NotificationDelegate = NotificationDelegate()
-    @StateObject var plantManager = PlantManager()
+    @StateObject private var plantManager = PlantManager()
     
     init() {
         let center = UNUserNotificationCenter.current()
@@ -36,7 +36,7 @@ struct grassApp: App {
     private func cleanupOrphanedNotifications() {
         let center = UNUserNotificationCenter.current()
         center.getPendingNotificationRequests { requests in
-            let validIdentifiers = plantManager.plants.flatMap { plant in
+            let validIdentifiers = self.plantManager.plants.flatMap { plant in
                 ["watering-\(plant.id)", "fertilisation-\(plant.id)"]
             }
             
@@ -52,7 +52,8 @@ struct grassApp: App {
     
     var body: some Scene {
         WindowGroup {
-            ContentView(plantManager: plantManager)
+            ContentView()
+                .environmentObject(plantManager)
         }
     }
 }
