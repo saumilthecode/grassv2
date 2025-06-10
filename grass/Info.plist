@@ -2,7 +2,11 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSCameraUsageDescription</key>
+	<string>Hello! We need access to your camera for the growth tracking feature!</string>
 	<key>NSUserNotificationsUsageDescription</key>
-	<string>Hello! we need notifications to remind you to water and fertilise your plants!</string>
+	<string>Hello! We need notifications to remind you to water and fertilise your plants!</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Hello! We need access to your Photo Library for the growth tracking feature!</string>
 </dict>
 </plist>
