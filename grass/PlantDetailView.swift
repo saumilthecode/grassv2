@@ -83,14 +83,40 @@ struct PlantDetailView: View {
             }
         }
         .navigationTitle(plants.name)
-        .navigationBarItems(trailing: Button(action: {
-            isEditing = true
-        }) {
-            Image(systemName: "pencil")
+        .navigationBarItems(trailing: HStack {
+            if !plants.isDead {
+                Button(action: {
+                    isEditing = true
+                }) {
+                    Image(systemName: "pencil")
+                }
+            }
         })
         .sheet(isPresented: $isEditing) {
             NavigationView {
                 EditPlantView(plant: $plants)
+            }
+        }
+        .toolbar {
+            if !plants.isDead {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Menu {
+                        Button(role: .destructive, action: {
+                            plants.isDead = true
+                            plants.dateOfDeath = Date()
+                        }) {
+                            Label("Mark as Deceased", systemImage: "leaf.fill")
+                        }
+                    } label: {
+                        Image(systemName: "ellipsis.circle")
+                    }
+                }
+            } else {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    NavigationLink(destination: PlantObituaryView(plant: $plants)) {
+                        Image(systemName: "book.closed.fill")
+                    }
+                }
             }
         }
     }

@@ -11,10 +11,10 @@ import SwiftUI
 
 struct GrowthEntry: Identifiable, Codable, Equatable {
     let id: UUID
-    let date: Date
-    let imageData: Data
-    let dayNumber: Int
-    let notes: String
+    var date: Date
+    var imageData: Data
+    var dayNumber: Int
+    var notes: String
     
     init(id: UUID = UUID(), date: Date = Date(), imageData: Data, dayNumber: Int, notes: String = "") {
         self.id = id

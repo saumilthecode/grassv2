@@ -26,6 +26,7 @@ struct AddCustomPlantView: View {
     @State var fertInstruct: String = ""
     @Binding var plants: [Plant]
     var isOnboarding: Bool = false
+    var onPlantAdded: (() -> Void)? = nil
     
     @Environment(\.dismiss) var dismiss
     
@@ -67,20 +68,24 @@ struct AddCustomPlantView: View {
                             .frame(width: 50)
                             .padding(.leading)
                         Text("˚C")
+                        Spacer()
                         Stepper(value: $minTemp, in: -20...40) {
                             EmptyView()
                         }
                     }
+                    .padding(.trailing, 8)
                     HStack {
                         Text("Maximum Temperature")
                         TextField("", value: $maxTemp, formatter: NumberFormatter())
                             .frame(width: 50)
                             .padding(.leading)
                         Text("˚C")
+                        Spacer()
                         Stepper(value: $maxTemp, in: -19...41) {
                             EmptyView()
                         }
                     }
+                    .padding(.trailing, 8)
                     .onChange(of: minTemp) { _ in validateTempRange() }
                     .onChange(of: maxTemp) { _ in validateTempRange() }
                 }
@@ -91,14 +96,16 @@ struct AddCustomPlantView: View {
                             .frame(width: 50)
                             .padding(.leading)
                         Text("days")
+                        Spacer()
                         Stepper(value: $waterFreq, in: 1...30) {
                             EmptyView()
                         }
                     }
+                    .padding(.trailing, 8)
                     .onChange(of: waterFreq) { newValue in
                         isWaterFreqValid = newValue >= 1 && newValue <= 100
                     }
-                    TextField("Watering Instructions(Optional)", text: $waterInstruct)
+                    TextField("Watering Instructions (Optional)", text: $waterInstruct)
                 }
                 Section(header: Text("Fertilisation")) {
                     HStack {
@@ -107,14 +114,16 @@ struct AddCustomPlantView: View {
                             .frame(width: 50)
                             .padding(.leading)
                         Text("days")
+                        Spacer()
                         Stepper(value: $fertFreq, in: 1...8) {
                             EmptyView()
                         }
                     }
+                    .padding(.trailing, 8)
                     .onChange(of: fertFreq) { newValue in
                         isFertFreqValid = newValue >= 1 && newValue <= 100
                     }
-                    TextField("Fertilisation Instructions(Optional)", text: $fertInstruct)
+                    TextField("Fertilisation Instructions (Optional)", text: $fertInstruct)
                 }
                 Button("Save") {
                     if isFormValid {
@@ -124,6 +133,7 @@ struct AddCustomPlantView: View {
                     }
                 }
             }
+            .modifier(TopFormInset())
         }
         .navigationTitle(isOnboarding ? "Add Your First Plant" : "")
         .alert("Required Fields", isPresented: $showValidationAlert) {
@@ -149,28 +159,22 @@ struct AddCustomPlantView: View {
             temperatureRangeEnd: maxTemp
         )
         
-        let wateringContent = UNMutableNotificationContent()
-        wateringContent.title = "Water your plant"
-        wateringContent.subtitle = "It's thirsty"
-        wateringContent.sound = UNNotificationSound.default
-        
-        let wateringTrigger = UNTimeIntervalNotificationTrigger(timeInterval: Double(waterFreq * 86400), repeats: true)
-        let wateringRequest = UNNotificationRequest(identifier: "watering-\(plant.id)", content: wateringContent, trigger: wateringTrigger)
-        
-        UNUserNotificationCenter.current().add(wateringRequest)
-        
-        let fertilisationContent = UNMutableNotificationContent()
-        fertilisationContent.title = "Fertilise your plant"
-        fertilisationContent.subtitle = "It's hungry"
-        fertilisationContent.sound = UNNotificationSound.default
-        
-        let fertilisationTrigger = UNTimeIntervalNotificationTrigger(timeInterval: Double(fertFreq * 86400), repeats: true)
-        let fertilisationRequest = UNNotificationRequest(identifier: "fertilisation-\(plant.id)", content: fertilisationContent, trigger: fertilisationTrigger)
-        
-        UNUserNotificationCenter.current().add(fertilisationRequest)
-        
         plants.append(plant)
+        // Notifications will be scheduled automatically by PlantManager's didSet
+        onPlantAdded?()
         dismiss()
+    }
+}
+
+private struct TopFormInset: ViewModifier {
+    func body(content: Content) -> some View {
+        if #available(iOS 17.0, *) {
+            content
+                .contentMargins(.top, 20, for: .scrollContent)
+        } else {
+            content
+                .padding(.top, 20)
+        }
     }
 }
 

@@ -12,6 +12,8 @@
 		5FE49734291F36AF0068EE12 /* PlantManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FE49733291F36AF0068EE12 /* PlantManager.swift */; };
 		C69E05C3290CBC97008A449E /* AddCustomPlantView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C69E05C2290CBC97008A449E /* AddCustomPlantView.swift */; };
 		D2749D902DBA09FB00A04CB3 /* EditPlantView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2749D8F2DBA09FB00A04CB3 /* EditPlantView.swift */; };
+		D2E31C002EC19C1F003E5B8B /* PlantObituaryView 2.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2E31BFF2EC19C1F003E5B8B /* PlantObituaryView 2.swift */; };
+		D2E31C022EC19CD5003E5B8B /* LiquidGlass.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2E31C012EC19CD5003E5B8B /* LiquidGlass.swift */; };
 		D2EE09EC2DF410B0007875B9 /* LaunchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2EE09E62DF410B0007875B9 /* LaunchView.swift */; };
 		D2EE09F62DF41568007875B9 /* GrowthJournal.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2EE09F32DF41568007875B9 /* GrowthJournal.swift */; };
 		D2EE09F72DF41568007875B9 /* Plant.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2EE09F52DF41568007875B9 /* Plant.swift */; };
@@ -43,6 +45,8 @@
 		5FE49733291F36AF0068EE12 /* PlantManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlantManager.swift; sourceTree = "<group>"; };
 		C69E05C2290CBC97008A449E /* AddCustomPlantView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCustomPlantView.swift; sourceTree = "<group>"; };
 		D2749D8F2DBA09FB00A04CB3 /* EditPlantView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditPlantView.swift; sourceTree = "<group>"; };
+		D2E31BFF2EC19C1F003E5B8B /* PlantObituaryView 2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PlantObituaryView 2.swift"; sourceTree = "<group>"; };
+		D2E31C012EC19CD5003E5B8B /* LiquidGlass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiquidGlass.swift; sourceTree = "<group>"; };
 		D2EE09E62DF410B0007875B9 /* LaunchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchView.swift; sourceTree = "<group>"; };
 		D2EE09F32DF41568007875B9 /* GrowthJournal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrowthJournal.swift; sourceTree = "<group>"; };
 		D2EE09F42DF41568007875B9 /* GrowthTrackerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrowthTrackerView.swift; sourceTree = "<group>"; };
@@ -105,6 +109,8 @@
 				D921677A290391A40002F405 /* Assets.xcassets */,
 				D921677C290391A40002F405 /* grass.entitlements */,
 				D921677D290391A40002F405 /* Preview Content */,
+				D2E31BFF2EC19C1F003E5B8B /* PlantObituaryView 2.swift */,
+				D2E31C012EC19CD5003E5B8B /* LiquidGlass.swift */,
 			);
 			path = grass;
 			sourceTree = "<group>";
@@ -196,11 +202,13 @@
 				C69E05C3290CBC97008A449E /* AddCustomPlantView.swift in Sources */,
 				D9216777290391A20002F405 /* grassApp.swift in Sources */,
 				5F7636162921E8D2007EE253 /* PlantDetailView.swift in Sources */,
+				D2E31C022EC19CD5003E5B8B /* LiquidGlass.swift in Sources */,
 				D91B865D291601E300631102 /* PlantConfirmationView.swift in Sources */,
 				5F7636142921E803007EE253 /* ContentView.swift in Sources */,
 				D91B865B2915FAB600631102 /* PlantClass.swift in Sources */,
 				D2749D902DBA09FB00A04CB3 /* EditPlantView.swift in Sources */,
 				5FE49734291F36AF0068EE12 /* PlantManager.swift in Sources */,
+				D2E31C002EC19C1F003E5B8B /* PlantObituaryView 2.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

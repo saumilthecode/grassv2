@@ -17,28 +17,44 @@ import UserNotifications
 @main
 
 struct grassApp: App {
-    private var delegate: NotificationDelegate = NotificationDelegate()
     @StateObject private var plantManager = PlantManager()
+    @State private var delegate: NotificationDelegate?
     
     init() {
         let center = UNUserNotificationCenter.current()
-        center.delegate = delegate
         center.requestAuthorization(options: [.alert, .sound, .badge]) { result, error in
             if let error = error {
                 print(error)
             }
         }
-        
-        // Clean up any orphaned notifications
-        cleanupOrphanedNotifications()
+    }
+    
+    var body: some Scene {
+        WindowGroup {
+            ContentView()
+                .environmentObject(plantManager)
+                .onAppear {
+                    // Create and set up delegate with plantManager
+                    let newDelegate = NotificationDelegate()
+                    newDelegate.plantManager = plantManager
+                    UNUserNotificationCenter.current().delegate = newDelegate
+                    self.delegate = newDelegate
+                    
+                    // Clean up any orphaned notifications
+                    cleanupOrphanedNotifications()
+                }
+        }
     }
     
     private func cleanupOrphanedNotifications() {
         let center = UNUserNotificationCenter.current()
         center.getPendingNotificationRequests { requests in
-            let validIdentifiers = self.plantManager.plants.flatMap { plant in
-                ["watering-\(plant.id)", "fertilisation-\(plant.id)"]
-            }
+            // Only include notifications for living plants
+            let validIdentifiers = plantManager.plants
+                .filter { !$0.isDead }
+                .flatMap { plant in
+                    ["watering-\(plant.id)", "fertilisation-\(plant.id)"]
+                }
             
             let orphanedIdentifiers = requests
                 .map { $0.identifier }
@@ -48,12 +64,8 @@ struct grassApp: App {
                 center.removePendingNotificationRequests(withIdentifiers: orphanedIdentifiers)
             }
         }
-    }
-    
-    var body: some Scene {
-        WindowGroup {
-            ContentView()
-                .environmentObject(plantManager)
-        }
+        
+        // Also clean up notifications for dead plants
+        plantManager.cleanupNotificationsForDeadPlants()
     }
 }

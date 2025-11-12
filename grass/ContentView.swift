@@ -16,6 +16,7 @@ enum NotificationCategory: String {
 }
 
 class NotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
+    var plantManager: PlantManager?
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         
@@ -27,6 +28,19 @@ class NotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
     }
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        // Check if the plant is still alive before showing notification
+        if let plantIDString = notification.request.content.userInfo["plantID"] as? String,
+           let plantID = UUID(uuidString: plantIDString),
+           let plantManager = plantManager,
+           let plant = plantManager.plants.first(where: { $0.id == plantID }),
+           plant.isDead {
+            // Plant is dead - don't show notification
+            completionHandler([])
+            // Remove the notification request
+            center.removePendingNotificationRequests(withIdentifiers: [notification.request.identifier])
+            return
+        }
+        
         completionHandler([.banner, .sound, .badge])
     }
 }
@@ -44,19 +58,98 @@ struct ContentView: View {
             // Plants Tab
             NavigationView {
                 List {
-                    ForEach($plantManager.plants) { $plant in
-                        NavigationLink(destination: PlantDetailView(plants: $plant)) {
-                            VStack(alignment: .leading){
-                                Text(plant.name)
-                                HStack{
-                                    Spacer()
+                    // Living plants section
+                    let livingPlants = plantManager.plants.filter { !$0.isDead }
+                    if !livingPlants.isEmpty {
+                        Section(header: Text("Living Plants")) {
+                            ForEach(Array(plantManager.plants.enumerated()).filter { !$0.element.isDead }, id: \.element.id) { index, _ in
+                                let plantBinding = Binding(
+                                    get: { plantManager.plants[index] },
+                                    set: { plantManager.plants[index] = $0 }
+                                )
+                                NavigationLink(destination: PlantDetailView(plants: plantBinding)) {
+                                    HStack {
+                                        Image(systemName: "leaf.fill")
+                                            .foregroundColor(Color("Swamp Green"))
+                                        VStack(alignment: .leading) {
+                                            Text(plantManager.plants[index].name)
+                                                .font(.headline)
+                                            if !plantManager.plants[index].scientificName.isEmpty {
+                                                Text(plantManager.plants[index].scientificName)
+                                                    .font(.caption)
+                                                    .italic()
+                                                    .foregroundColor(.gray)
+                                            }
+                                        }
+                                        Spacer()
+                                    }
+                                }
+                                .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                                    Button(role: .destructive) {
+                                        // Mark as dead instead of deleting - preserve all data
+                                        let currentPlant = plantManager.plants[index]
+                                        var updatedPlant = currentPlant
+                                        updatedPlant.isDead = true
+                                        updatedPlant.dateOfDeath = Date()
+                                        // Ensure growth journal and all other data is preserved
+                                        plantManager.plants[index] = updatedPlant
+                                    } label: {
+                                        Label("Mark as Dead", systemImage: "leaf.fill")
+                                    }
+                                    .tint(.gray)
+                                }
+                            }
+                            .onMove { source, destination in
+                                // Handle move for living plants only
+                                var livingIndices = plantManager.plants.enumerated()
+                                    .filter { !$0.element.isDead }
+                                    .map { $0.offset }
+                                livingIndices.move(fromOffsets: source, toOffset: destination)
+                                // Reorder plants array based on new order
+                                let livingPlants = livingIndices.map { plantManager.plants[$0] }
+                                let deadPlants = plantManager.plants.filter { $0.isDead }
+                                plantManager.plants = livingPlants + deadPlants
+                            }
+                        }
+                    }
+                    
+                    // Dead plants / Obituaries section
+                    let deadPlants = plantManager.plants.filter { $0.isDead }
+                    if !deadPlants.isEmpty {
+                        Section(header: Text("In Memory")) {
+                            ForEach(Array(plantManager.plants.enumerated()).filter { $0.element.isDead }, id: \.element.id) { index, _ in
+                                let plantBinding = Binding(
+                                    get: { plantManager.plants[index] },
+                                    set: { plantManager.plants[index] = $0 }
+                                )
+                                NavigationLink(destination: PlantObituaryView(plant: plantBinding)) {
+                                    HStack {
+                                        Image(systemName: "leaf.fill")
+                                            .foregroundColor(.gray)
+                                            .opacity(0.6)
+                                        VStack(alignment: .leading) {
+                                            Text(plantManager.plants[index].name)
+                                                .font(.headline)
+                                                .foregroundColor(.gray)
+                                            if let dateOfDeath = plantManager.plants[index].dateOfDeath {
+                                                Text("Passed away \(dateOfDeath.formatted(date: .abbreviated, time: .omitted))")
+                                                    .font(.caption)
+                                                    .foregroundColor(.gray)
+                                            }
+                                        }
+                                        Spacer()
+                                    }
                                 }
                             }
                         }
-                    }.onDelete { offset in
-                        plantManager.plants.remove(atOffsets: offset)
-                    }.onMove { source, destination in
-                        plantManager.plants.move(fromOffsets: source, toOffset: destination)
+                    }
+                    
+                    if plantManager.plants.isEmpty {
+                        Section {
+                            Text("No plants yet. Tap + to add your first plant!")
+                                .foregroundColor(.gray)
+                                .italic()
+                        }
                     }
                 }
                 .navigationTitle("My Plants")
@@ -80,15 +173,24 @@ struct ContentView: View {
             // Growth Tracker Tab
             NavigationView {
                 List {
-                    ForEach($plantManager.plants) { $plant in
-                        NavigationLink(destination: GrowthTrackerView(plant: $plant)) {
+                    ForEach(Array(plantManager.plants.enumerated()).filter { !$0.element.isDead }, id: \.element.id) { index, _ in
+                        let plantBinding = Binding(
+                            get: { plantManager.plants[index] },
+                            set: { plantManager.plants[index] = $0 }
+                        )
+                        NavigationLink(destination: GrowthTrackerView(plant: plantBinding)) {
                             VStack(alignment: .leading) {
-                                Text(plant.name)
-                                Text("\(plant.growthJournal.entries.count) growth entries")
+                                Text(plantManager.plants[index].name)
+                                Text("\(plantManager.plants[index].growthJournal.entries.count) growth entries")
                                     .font(.caption)
                                     .foregroundColor(.gray)
                             }
                         }
+                    }
+                    if plantManager.plants.filter({ !$0.isDead }).isEmpty {
+                        Text("No living plants to track. Add a plant to start tracking growth!")
+                            .foregroundColor(.gray)
+                            .italic()
                     }
                 }
                 .navigationTitle("Growth Tracker")

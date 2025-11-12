@@ -78,32 +78,8 @@ struct EditPlantView: View {
     }
     
     private func updateNotifications() {
-        let center = UNUserNotificationCenter.current()
-        
-        // Remove existing notifications
-        center.removeAllPendingNotificationRequests()
-        
-        // Create watering notification
-        let wateringContent = UNMutableNotificationContent()
-        wateringContent.title = "Water your plant"
-        wateringContent.subtitle = "It's thirsty"
-        wateringContent.sound = UNNotificationSound.default
-        
-        let wateringTrigger = UNTimeIntervalNotificationTrigger(timeInterval: Double(plant.wateringFrequency * 86400), repeats: true)
-        let wateringRequest = UNNotificationRequest(identifier: "watering-\(plant.id)", content: wateringContent, trigger: wateringTrigger)
-        
-        // Create fertilisation notification
-        let fertilisationContent = UNMutableNotificationContent()
-        fertilisationContent.title = "Fertilise your plant"
-        fertilisationContent.subtitle = "It's hungry"
-        fertilisationContent.sound = UNNotificationSound.default
-        
-        let fertilisationTrigger = UNTimeIntervalNotificationTrigger(timeInterval: Double(plant.fertilisationFrequency * 86400), repeats: true)
-        let fertilisationRequest = UNNotificationRequest(identifier: "fertilisation-\(plant.id)", content: fertilisationContent, trigger: fertilisationTrigger)
-        
-        // Add notifications
-        center.add(wateringRequest)
-        center.add(fertilisationRequest)
+        // Notifications will be updated automatically by PlantManager's didSet
+        // when the plant binding is updated
     }
 }
 

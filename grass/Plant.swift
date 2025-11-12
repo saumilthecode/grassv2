@@ -19,8 +19,11 @@ struct Plant: Identifiable, Codable, Equatable {
     var temperatureRangeBegin: Int
     var temperatureRangeEnd: Int
     var growthJournal: GrowthJournal
+    var isDead: Bool
+    var dateOfDeath: Date?
+    var obituary: String?
     
-    init(id: UUID = UUID(), name: String, scientificName: String, wateringFrequency: Int, wateringGuide: String, fertilisationFrequency: Int, fertilisationGuide: String, temperatureRangeBegin: Int, temperatureRangeEnd: Int, growthJournal: GrowthJournal = GrowthJournal()) {
+    init(id: UUID = UUID(), name: String, scientificName: String, wateringFrequency: Int, wateringGuide: String, fertilisationFrequency: Int, fertilisationGuide: String, temperatureRangeBegin: Int, temperatureRangeEnd: Int, growthJournal: GrowthJournal = GrowthJournal(), isDead: Bool = false, dateOfDeath: Date? = nil, obituary: String? = nil) {
         self.id = id
         self.name = name
         self.scientificName = scientificName
@@ -31,6 +34,9 @@ struct Plant: Identifiable, Codable, Equatable {
         self.temperatureRangeBegin = temperatureRangeBegin
         self.temperatureRangeEnd = temperatureRangeEnd
         self.growthJournal = growthJournal
+        self.isDead = isDead
+        self.dateOfDeath = dateOfDeath
+        self.obituary = obituary
     }
     
     static func == (lhs: Plant, rhs: Plant) -> Bool {
@@ -43,6 +49,9 @@ struct Plant: Identifiable, Codable, Equatable {
         lhs.fertilisationGuide == rhs.fertilisationGuide &&
         lhs.temperatureRangeBegin == rhs.temperatureRangeBegin &&
         lhs.temperatureRangeEnd == rhs.temperatureRangeEnd &&
-        lhs.growthJournal == rhs.growthJournal
+        lhs.growthJournal == rhs.growthJournal &&
+        lhs.isDead == rhs.isDead &&
+        lhs.dateOfDeath == rhs.dateOfDeath &&
+        lhs.obituary == rhs.obituary
     }
 } 
